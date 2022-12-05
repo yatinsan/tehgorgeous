@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:the_gorgeous_login/theme.dart';
 import 'package:the_gorgeous_login/widgets/snackbar.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key key}) : super(key: key);
+  const SignUp({Key? key}) : super(key: key);
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -23,7 +25,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController signupNameController = TextEditingController();
   TextEditingController signupPasswordController = TextEditingController();
   TextEditingController signupConfirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   @override
   void dispose() {
@@ -235,7 +237,7 @@ class _SignUpState extends State<SignUp> {
                   //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: const Padding(
                     padding:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
                     child: Text(
                       'SIGN UP',
                       style: TextStyle(
@@ -254,8 +256,28 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void _toggleSignUpButton() {
-    CustomSnackBar(context, const Text('SignUp button pressed'));
+  Future<void> _toggleSignUpButton() async {
+    try {
+
+      if(
+      signupPasswordController.text != signupConfirmPasswordController.text
+      ){
+        CustomSnackBar(context, const Text('Password not same'),backgroundColor: Colors.red);
+
+      return;
+      }
+    UserCredential user=  await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: signupEmailController.text,
+          password: signupPasswordController.text);
+      FirebaseFirestore.instance.collection('users').add(<String,dynamic>{'uid':user.user?.uid,'name':signupNameController.text});
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        CustomSnackBar(context, Text(e.message ?? '',), backgroundColor: Colors.red);
+      } else {
+        CustomSnackBar(
+            context, const Text('signup failed',), backgroundColor: Colors.red);
+      }
+    }
   }
 
   void _toggleSignup() {

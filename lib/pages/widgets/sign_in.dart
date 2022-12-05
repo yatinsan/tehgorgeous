@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:the_gorgeous_login/theme.dart';
 import 'package:the_gorgeous_login/widgets/snackbar.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key key}) : super(key: key);
+  const SignIn({Key? key}) : super(key: key);
 
   @override
   _SignInState createState() => _SignInState();
@@ -25,6 +26,8 @@ class _SignInState extends State<SignIn> {
     focusNodePassword.dispose();
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -160,8 +163,7 @@ class _SignInState extends State<SignIn> {
                           fontFamily: 'WorkSansBold'),
                     ),
                   ),
-                  onPressed: () => CustomSnackBar(
-                      context, const Text('Login button pressed')),
+                  onPressed: () => _toggleSignInButton(),
                 ),
               )
             ],
@@ -273,8 +275,21 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  void _toggleSignInButton() {
-    CustomSnackBar(context, const Text('Login button pressed'));
+  Future<void> _toggleSignInButton()async {
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: loginEmailController.text,
+          password: loginPasswordController.text);
+      CustomSnackBar(context, const Text('Login Successful'));
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        CustomSnackBar(context, Text(e.message ?? '',), backgroundColor: Colors.red);
+      } else {
+        CustomSnackBar(
+            context, const Text('Login failed',), backgroundColor: Colors.red);
+      }
+    }
   }
 
   void _toggleLogin() {

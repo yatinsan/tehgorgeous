@@ -5,7 +5,7 @@ import 'package:the_gorgeous_login/theme.dart';
 import 'package:the_gorgeous_login/utils/bubble_indicator_painter.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  PageController _pageController;
+  PageController _pageController = PageController();
 
   Color left = Colors.black;
   Color right = Colors.white;
@@ -93,17 +93,18 @@ class _LoginPageState extends State<LoginPage>
                       child: const SignIn(),
                     ),
                     ConstrainedBox(
-                      constraints: const BoxConstraints.expand(),
-                      child: const SignUp(),
-                    ),
-                  ],
+                        constraints: const BoxConstraints.expand(),
+                        child:  const SignUp(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildMenuBar(BuildContext context) {
@@ -162,7 +163,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void _onSignUpButtonPress() {
-    _pageController?.animateToPage(1,
+    _pageController.animateToPage(1,
         duration: const Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 }
